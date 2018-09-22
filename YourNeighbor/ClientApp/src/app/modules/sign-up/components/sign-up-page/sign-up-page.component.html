@@ -1,0 +1,45 @@
+<main>
+  <form class="main-form" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+    <mat-form-field class="full-width">
+      <input matInput
+             placeholder="Имя" 
+             formControlName="firstName"
+             autocomplete="off"
+             required>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <input matInput
+             placeholder="Фамилия" 
+             formControlName="lastName"
+             autocomplete="off"
+             required>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <input matInput
+             placeholder="E-mail" 
+             formControlName="email"
+             autocomplete="off"
+             type="email"
+             required>
+    </mat-form-field>
+    <form formGroupName="passwords">
+      <mat-form-field class="full-width">
+        <input matInput
+              placeholder="Пароль" 
+              formControlName="password" 
+              type="password"
+              autocomplete="off"
+              required>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input matInput
+              placeholder="Повторите пароль" 
+              formControlName="password2" 
+              type="password"
+              autocomplete="off"
+              required>
+      </mat-form-field>
+    </form>
+    <button [disabled]="submitState" mat-raised-button color="primary" type="submit">Зарегистрироваться</button>
+  </form>
+</main>

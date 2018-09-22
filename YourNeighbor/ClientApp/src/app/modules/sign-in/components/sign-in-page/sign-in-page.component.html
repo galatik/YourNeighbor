@@ -1,0 +1,24 @@
+<main>
+  <form [formGroup]="signInForm" (ngSubmit)="onSubmit()">
+    <mat-form-field class="full-width">
+      <input matInput
+             placeholder="E-mail" 
+             formControlName="email"
+             autocomplete="off"
+             required
+             type="email">
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <input matInput
+             placeholder="Пароль" 
+             formControlName="password"
+             autocomplete="new-password"
+             required
+             type="password">
+    </mat-form-field>
+    <button mat-raised-button 
+            [disabled]="submitState" 
+            type="submit"
+            color="primary">Войти</button>
+  </form>
+</main>
