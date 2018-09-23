@@ -33,16 +33,16 @@ namespace YourNeighbor.Models
 
         public bool HasPets { get; set; }
 
-        public ICollection<UserArea> UserAreas { get; set; }
+        public ICollection<UserArea> UserAreas { get; set; } = new List<UserArea>();
 
         public int StartCost { get; set; }
 
         public int MaxCost { get; set; }
 
-        public ICollection<Message> MyMessages { get; set; }
+        public ICollection<Message> MyMessages { get; set; } = new List<Message>();
 
-        public ICollection<Message> MessagesToMe { get; set; }
+        public ICollection<Message> MessagesToMe { get; set; } = new List<Message>();
 
-        public ICollection<UserInterest> Interests { get; set; }
+        public ICollection<UserInterest> Interests { get; set; } = new List<UserInterest>();
     }
 }

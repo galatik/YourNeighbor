@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using YourNeighbor.Models;
 using YourNeighbor.Models.Account;
+using YourNeighbor.Data;
 
 namespace YourNeighbor.Controllers
 {
@@ -17,10 +19,13 @@ namespace YourNeighbor.Controllers
 
         private readonly SignInManager<User> _signInManager;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        private readonly ApplicationDbContext _appDbContext;
+
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext applicationDbContext)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _appDbContext = applicationDbContext;
         }
 
 
@@ -100,5 +105,119 @@ namespace YourNeighbor.Controllers
 
             return Ok();
         }
+
+        // TODO: Check should _appDbContext be saved or not
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromBody] EditModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await (from u in _appDbContext.Users
+                            where u.UserName == HttpContext.User.Identity.Name
+                            select u).Include(u => u.UserAreas).Include(u => u.Interests)
+                           .FirstOrDefaultAsync();
+                    
+                if(user != null)
+                {
+                    if (!string.IsNullOrEmpty(model.Login))
+                    {
+                        user.UserName = model.Login;
+                    }
+
+                    if (!string.IsNullOrEmpty(model.FirstName))
+                    {
+                        user.FirstName = model.FirstName;
+                    }
+
+                    if (!string.IsNullOrEmpty(model.LastName))
+                    {
+                        user.LastName = model.LastName;
+                    }
+
+                    if (!string.IsNullOrEmpty(model.AboutMe))
+                    {
+                        user.AboutMe = model.AboutMe;
+                    }
+
+                    if (model.SocialStatus != null)
+                    {
+                        user.SocialStatus = (SocialStatus) model.SocialStatus;
+                    }
+
+                    if (model.Bithday != null)
+                    {
+                        user.Birthday = model.Bithday;
+                    }
+
+                    if (model.MinCountOfRooms != null)
+                    {
+                        user.MinCountOfRooms = (int) model.MinCountOfRooms;
+                    }
+
+                    if (model.MaxCountOfRooms != null)
+                    {
+                        user.MaxCountOfRooms = (int) model.MaxCountOfRooms;
+                    }
+
+                    if (model.MaxCost != null)
+                    {
+                        user.MaxCost = (int) model.MaxCost;
+                    }
+
+                    if (model.StartCost != null)
+                    {
+                        user.StartCost = (int) model.StartCost;
+                    }
+
+                    if (model.Smoking != null)
+                    {
+                        user.Smoking = (bool) model.Smoking;
+                    }
+
+                    if (model.HasPets != null)
+                    {
+                        user.HasPets = (bool) model.HasPets;
+                    }
+
+                    if (model.Areas != null)
+                    {
+                        foreach(var area in model.Areas)
+                        {
+                            if (!user.UserAreas.Any(ua => ua.AreaId == area.Id))
+                            {
+                                user.UserAreas.Add(new UserArea()
+                                {
+                                    UserId = user.Id,
+                                    AreaId = area.Id
+                                });
+                            }   
+                        }
+                    }
+
+                    if (model.Interests != null)
+                    {
+                        foreach (var interest in model.Interests)
+                        {
+                            if (!user.Interests.Any(i => i.Interest == interest.Name))
+                            {
+                                user.Interests.Add(new UserInterest()
+                                {
+                                    UserId = user.Id,
+                                    Interest = interest.Name
+                                });
+                            }
+                        }
+                    }
+
+                    await _userManager.UpdateAsync(user);
+
+                    return Ok("Changes have been saved");
+                }
+            }
+
+            return BadRequest(ModelState);
+        }
+
     }
 }

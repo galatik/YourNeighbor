@@ -7,6 +7,10 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using YourNeighbor.Data;
+using Microsoft.AspNetCore.Identity;
+using YourNeighbor.Models;
 
 namespace YourNeighbor
 {
@@ -14,7 +18,21 @@ namespace YourNeighbor
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                
+                var context = services.GetRequiredService<ApplicationDbContext>();
+
+                var userManager = services.GetRequiredService<UserManager<User>>();
+
+                DbInitializer.Initialize(userManager ,context);
+                
+            }
+
+            host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

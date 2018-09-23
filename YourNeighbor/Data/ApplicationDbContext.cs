@@ -25,6 +25,8 @@ namespace YourNeighbor.Data
 
         public DbSet<City> Cities { get; set; }
 
+        public DbSet<Dialog> Dialogs { get; set; }
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -78,6 +80,19 @@ namespace YourNeighbor.Data
             builder.Entity<UserInterest>().HasOne(typeof(Interest)).WithMany().HasForeignKey("Interest");
 
             builder.Entity<UserInterest>().HasKey(ui => new { ui.UserId, ui.Interest });
+
+            builder.Query<Dialog>(query =>
+            {
+                query.ToView("Dialogs");
+
+                query.Property(d => d.LastMessageUserFromId).HasColumnName("Last_Message_User_From_Id");
+
+                query.Property(d => d.LastMessageUserToId).HasColumnName("Last_Message_User_To_Id");
+
+                query.Property(d => d.LastMessageTime).HasColumnName("Last_Message_Time");
+
+                query.Property(d => d.LastMessageText).HasColumnName("Last_Message_Text");
+            })
         }
     }
 }
