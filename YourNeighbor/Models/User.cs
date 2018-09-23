@@ -14,7 +14,7 @@ namespace YourNeighbor.Models
 
         public string FirstName { get; set; }
 
-        public string LastName { get; set; }
+        public string LastName { get; set; }  
 
         public Gender Gender { get; set; }
 
