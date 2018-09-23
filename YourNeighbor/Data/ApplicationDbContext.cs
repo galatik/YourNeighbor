@@ -25,7 +25,7 @@ namespace YourNeighbor.Data
 
         public DbSet<City> Cities { get; set; }
 
-        public DbSet<Dialog> Dialogs { get; set; }
+        public DbQuery<Dialog> Dialogs { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -92,7 +92,7 @@ namespace YourNeighbor.Data
                 query.Property(d => d.LastMessageTime).HasColumnName("Last_Message_Time");
 
                 query.Property(d => d.LastMessageText).HasColumnName("Last_Message_Text");
-            })
+            });
         }
     }
 }
